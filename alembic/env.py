@@ -20,7 +20,12 @@ import sys
 import os
 sys.path.append(os.getcwd())
 from app.models import Base
+from app.config import settings
+
 target_metadata = Base.metadata
+
+# Overwrite the alembic.ini value with our environment variable
+config.set_main_option("sqlalchemy.url", settings.sqlalchemy_database_url)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
