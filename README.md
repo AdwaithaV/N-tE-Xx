@@ -2,6 +2,8 @@
 
 A FastAPI-based backend for a note-taking application with version history.
 
+**Live Deployment**: https://n-te-xx-1.onrender.com/docs
+
 ## Features
 - **User Authentication**: Register/Login with JWT.
 - **Notes Management**: Create, Read, Update, Delete (CRUD) notes.
@@ -85,3 +87,9 @@ A Postman collection is included: `postman_collection.json`. Import it into Post
 
 ## License
 MIT
+
+## Author
+
+**Adwaitha V**
+Electronics and Computer Engineering
+Amrita Vishwa Vidyapeetham
