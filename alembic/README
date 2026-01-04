@@ -1,0 +1,12 @@
+# Database Migrations (Alembic)
+
+This folder contains the history of changes made to your database structure (schema).
+
+- **versions/**: Contains the individual python scripts that apply changes (e.g., creating tables, adding columns).
+- **env.py**: Configuration file that tells Alembic how to connect to your database.
+
+## Common Commands
+To apply the latest changes to your database:
+```bash
+alembic upgrade head
+```

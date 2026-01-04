@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from . import models, schemas
 from passlib.context import CryptContext
 
@@ -38,30 +39,73 @@ def get_note_by_id(db: Session, note_id: int):
 
 # --- THE VERSIONING MAGIC ---
 def update_note(db: Session, note_id: int, note_update: schemas.NoteUpdate, user_id: int):
-    # 1. Fetch current note
+    # 1. Fetch the note to be updated
     db_note = db.query(models.Note).filter(models.Note.id == note_id).first()
     if not db_note:
         return None
 
-    # 2. CREATE SNAPSHOT (Save current state to history)
+    # 2. Create a snapshot of the current state (Read-Copy-Update)
+    # This snapshot is saved to the history table.
+    
+    # Calculate the next version number
+    last_version = db.query(func.max(models.NoteVersion.version)).filter(models.NoteVersion.note_id == note_id).scalar() or 0
+    new_version = last_version + 1
+
     history_entry = models.NoteVersion(
         note_id=db_note.id,
+        version=new_version,
         editor_id=user_id,
-        title=db_note.title,
-        content=db_note.content
+        title=db_note.title, # Snapshot title
+        content=db_note.content # Snapshot content
     )
-    db.add(history_entry) # Stage the history entry
+    db.add(history_entry) # Stage for saving
 
-    # 3. Update the actual note with new data
+    # 3. Apply updates to the note content
     if note_update.title:
         db_note.title = note_update.title
     if note_update.content:
         db_note.content = note_update.content
     
-    # 4. Commit both changes in one transaction
+    # 4. Save everything (the new history entry AND the updated note) in one go
     db.commit()
     db.refresh(db_note)
     return db_note
 
 def get_note_history(db: Session, note_id: int):
-    return db.query(models.NoteVersion).filter(models.NoteVersion.note_id == note_id).all()
+    return db.query(models.NoteVersion).filter(models.NoteVersion.note_id == note_id).order_by(models.NoteVersion.version.desc()).all()
+
+def get_note_version(db: Session, note_id: int, version: int):
+    return db.query(models.NoteVersion).filter(models.NoteVersion.note_id == note_id, models.NoteVersion.version == version).first()
+
+def restore_note_version(db: Session, note_id: int, version: int, user_id: int):
+    # Retrieve the specific history version to restore
+    version_snapshot = get_note_version(db, note_id, version)
+    if not version_snapshot:
+        return None
+    
+    db_note = get_note_by_id(db, note_id)
+    if not db_note:
+        return None
+        
+    # Treat restoration as an update: save the current state as a new version
+    # before overwriting with historical data to prevent data loss.
+    
+    last_version = db.query(func.max(models.NoteVersion.version)).filter(models.NoteVersion.note_id == note_id).scalar() or 0
+    new_version = last_version + 1
+    
+    history_entry = models.NoteVersion(
+        note_id=db_note.id,
+        version=new_version,
+        editor_id=user_id,
+        title=db_note.title,
+        content=db_note.content
+    )
+    db.add(history_entry)
+    
+    # Overwrite current note with snapshot data
+    db_note.title = version_snapshot.title
+    db_note.content = version_snapshot.content
+    
+    db.commit()
+    db.refresh(db_note)
+    return db_note

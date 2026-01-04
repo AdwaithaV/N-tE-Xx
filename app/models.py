@@ -27,9 +27,10 @@ class NoteVersion(Base):
     __tablename__ = "note_versions"
     id = Column(Integer, primary_key=True, index=True)
     note_id = Column(Integer, ForeignKey("notes.id"))
-    editor_id = Column(Integer, ForeignKey("users.id")) # Who made the change
-    title = Column(String) # Snapshot of title
-    content = Column(Text) # Snapshot of content
+    version = Column(Integer, index=True) # Explicit version number
+    editor_id = Column(Integer, ForeignKey("users.id")) # ID of the user who made the edit
+    title = Column(String) # Title at time of version
+    content = Column(Text) # Content at time of version
     changed_at = Column(DateTime(timezone=True), server_default=func.now())
 
     note = relationship("Note", back_populates="versions")

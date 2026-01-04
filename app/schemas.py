@@ -27,6 +27,7 @@ class NoteUpdate(BaseModel):
 
 class NoteVersionResponse(NoteBase):
     id: int
+    version: int
     changed_at: datetime
     editor_id: int
     class Config:

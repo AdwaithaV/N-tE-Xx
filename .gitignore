@@ -1,0 +1,49 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Env
+venv/
+.venv/
+
+# Environment Variables
+.env
+.env.local
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# IntelliJ / VSCode
+.idea/
+.vscode/
+
+# Logs
+*.log
+debug_error.txt
+verify_log.txt
+test_result.txt
+test_output.txt
+test_log.txt
+single_test_log.txt
