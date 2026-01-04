@@ -8,7 +8,7 @@ from .. import crud, schemas, database, models
 
 router = APIRouter(tags=["Authentication"])
 
-SECRET_KEY = "YOUR_SECRET_KEY_HERE" # Change this for production!
+SECRET_KEY = "YOUR_SECRET_KEY_HERE" 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
