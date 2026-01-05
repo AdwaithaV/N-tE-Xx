@@ -20,7 +20,7 @@ A FastAPI-based backend for a note-taking application with version history.
 
 1. Clone the repository:
    ```bash
-   git clone <repo-url>
+   git clone https://github.com/AdwaithaV/N-tE-Xx.git
    cd notes-api
    ```
 
