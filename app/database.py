@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from .config import settings
 
 # Your Neon Connection String
-SQLALCHEMY_DATABASE_URL = settings.sqlalchemy_database_url
+SQLALCHEMY_DATABASE_URL = "paste your neon url here"
 
 # UPDATE: Added pool_pre_ping=True to fix SSL drops
 engine = create_engine(
